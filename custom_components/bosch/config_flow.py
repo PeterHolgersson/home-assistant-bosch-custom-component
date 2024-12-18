@@ -73,7 +73,7 @@ class BoschFlowHandler(config_entries.ConfigFlow):
                     ),
                     errors=errors,
                 )
-            elif self._choose_type in (NEFIT, EASYCONTROL, IVT_MBLAN):
+            if self._choose_type in (NEFIT, EASYCONTROL, IVT_MBLAN):
                 return await self.async_step_protocol({CONF_PROTOCOL: XMPP})
         return self.async_show_form(
             step_id="choose_type",

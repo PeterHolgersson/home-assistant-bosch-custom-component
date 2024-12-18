@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import random
-from datetime import timedelta
+from datetime import datetime, timedelta
 from collections.abc import Awaitable
 from typing import Any
 
@@ -458,7 +458,8 @@ class BoschGatewayEntry:
         rawscan = {}
         async with self._update_lock:
             _LOGGER.info("Starting rawscan of Bosch component")
-            self.hass.components.persistent_notification.async_create(
+            async_create_persistent_notification(
+                self.hass,
                 title="Bosch scan",
                 message=(f"Starting rawscan"),
                 notification_id=NOTIFICATION_ID,
@@ -476,7 +477,8 @@ class BoschGatewayEntry:
                 random.randint(0, 5000),
             )
             _LOGGER.info(f"Rawscan success. Your URL: {url}")
-            self.hass.components.persistent_notification.async_create(
+            async_create_persistent_notification(
+                self.hass,
                 title="Bosch scan",
                 message=(f"[{url}]({url})"),
                 notification_id=NOTIFICATION_ID,

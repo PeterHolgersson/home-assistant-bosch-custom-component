@@ -1,5 +1,6 @@
 """Services used in HA."""
 from __future__ import annotations
+from datetime import datetime
 import logging
 import voluptuous as vol
 from homeassistant.core import HomeAssistant, ServiceCall, ServiceResponse, SupportsResponse
@@ -68,7 +69,8 @@ def async_register_debug_service(hass: HomeAssistant, entry: ConfigEntry) -> Non
 
     async def async_handle_debug_service(service_call: ServiceCall) -> ServiceResponse:
         """Make bosch scan for debug purposes of thermostat."""
-        filename = hass.config.path("www/bosch_scan.json")
+        now = datetime.now()
+        filename = hass.config.path(f"www/bosch_scan-{now.replace(microsecond=0)}.json")
         _gateway_entries = find_gateway_entry(hass=hass, devices_id=service_call.data[ATTR_DEVICE_ID])
         if not _gateway_entries:
             return
@@ -115,8 +117,11 @@ def async_register_services(hass: HomeAssistant, entry: ConfigEntry) -> None:
         day = dt_util.start_of_local_day(service_call.data.get("day"))
         _gateway_entries = find_gateway_entry(hass=hass, devices_id=service_call.data[ATTR_DEVICE_ID])
         if not _gateway_entries:
+            _LOGGER.debug("No sensor found")
             return
         for _gateway_entry in _gateway_entries:
+            _LOGGER.debug("fitta")
+            _LOGGER.debug(f"{_gateway_entry.hass.data[DOMAIN][_gateway_entry.uuid].get(RECORDING, [])},{statistic_id}")
             recording_entities: list[RecordingSensor] = _gateway_entry.hass.data[DOMAIN][_gateway_entry.uuid].get(RECORDING, [])
             for entity in recording_entities:
                 if entity.enabled and entity.statistic_id == statistic_id:

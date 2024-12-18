@@ -51,6 +51,9 @@ class RecordingSensor(StatisticHelper):
 
     async def async_old_gather_update(self) -> None:
         """Old async update."""
+        self._unit_of_measurement = UNITS_CONVERTER.get(
+                self._bosch_object.unit_of_measurement
+            )
         data = self._bosch_object.get_property(self._attr_uri)
         now = dt_util.now()
         if not data and not data.get(VALUE):
@@ -67,7 +70,7 @@ class RecordingSensor(StatisticHelper):
             for row in data[VALUE]:
                 if row["d"] == last_hour:
                     return row.get(VALUE)
-            return STATE_UNAVAILABLE
+            return 0.0 #STATE_UNAVAILABLE
 
         self._state = find_idx()
         self.attrs_write(last_reset=last_hour)
@@ -86,7 +89,7 @@ class RecordingSensor(StatisticHelper):
             async with self._statistic_import_lock:
                 await self._insert_statistics()
         else:
-            _LOGGER.debug("Old gather data algorithm.")
+            _LOGGER.debug("Äldre algorithm för inhämtning av data.")
             await self.async_old_gather_update()
 
     async def _upsert_past_statistics(
