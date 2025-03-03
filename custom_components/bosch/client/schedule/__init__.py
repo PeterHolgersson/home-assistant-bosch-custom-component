@@ -3,7 +3,7 @@ import logging
 from datetime import datetime
 from .easycontrol_programs import ZonePrograms
 
-from bosch_thermostat_client.const import (
+from ..const import (
     MODE,
     SETPOINT,
     VALUE,
@@ -30,7 +30,7 @@ from bosch_thermostat_client.const import (
     OFF,
 )
 
-from bosch_thermostat_client.const.ivt import (
+from ..const.ivt import (
     DAYOFWEEK,
     TIME,
     TEMP,
@@ -38,7 +38,7 @@ from bosch_thermostat_client.const.ivt import (
     SWITCH_POINTS,
     CAN,
 )
-from bosch_thermostat_client.exceptions import DeviceException
+from ..exceptions import DeviceException
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -107,10 +107,10 @@ class Schedule:
         except DeviceException:
             self._schedule_found = False
             _LOGGER.info(
-                "URI for Active Program %s doesn't exists. Maybe we can figure it out how to work anyway",
+                "URI for Active Program %s doesn't exists.\
+                     Maybe we can figure it out how to work anyway",
                 active_program,
             )
-            pass
 
     async def update_schedule_test(self, result, time):
         """Test function to do. Update schedule from Bosch gateway."""
@@ -157,7 +157,6 @@ class Schedule:
                 )
             if setpoint == OFF:
                 result = {}
-                pass
             else:
                 _LOGGER.debug("Bug %s", err)
                 raise DeviceException

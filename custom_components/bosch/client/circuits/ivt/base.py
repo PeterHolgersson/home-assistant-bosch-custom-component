@@ -2,7 +2,7 @@
 import logging
 
 from ..circuit import CircuitWithSchedule
-from bosch_thermostat_client.const import (
+from ...const import (
     HVAC_ACTION,
     HVAC_HEAT,
     HVAC_OFF,
@@ -24,7 +24,7 @@ from bosch_thermostat_client.const import (
     ID,
     WRITEABLE,
 )
-from bosch_thermostat_client.const.ivt import (
+from ...const.ivt import (
     CURRENT_SETPOINT,
     CAN,
     ALLOWED_VALUES,
@@ -35,6 +35,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class IVTCircuit(CircuitWithSchedule):
+    """Circuit type with schedule."""
     def __init__(self, connector, attr_id, db, _type, bus_type, current_date, **kwargs):
         super().__init__(
             connector, attr_id, db, CIRCUIT_TYPES[_type], bus_type, current_date
@@ -128,7 +129,8 @@ class IVTCircuit(CircuitWithSchedule):
                     self.schedule.cache_temp_for_mode(temperature)
                 return True
         _LOGGER.error(
-            "Setting temperature not allowed in this mode. Temperature is probably out of range MIN-MAX!"
+            "Setting temperature not allowed in this mode.\
+                 Temperature is probably out of range MIN-MAX!"
         )
         return False
 
@@ -143,6 +145,7 @@ class IVTCircuit(CircuitWithSchedule):
 
     @property
     def preset_modes(self):
+        """Preset modes."""
         active_programs = self.get_property(ACTIVE_PROGRAM).get(ALLOWED_VALUES, [])
         if active_programs:
             return active_programs
@@ -151,9 +154,11 @@ class IVTCircuit(CircuitWithSchedule):
 
     @property
     def preset_mode(self):
+        """Preset mode."""
         return self.get_activeswitchprogram()
 
     async def set_preset_mode(self, preset_mode):
+        """Set preset mode."""
         act_program = self._data.get(ACTIVE_PROGRAM, {})
         active_program_uri = act_program[URI]
         active_program = act_program.get(RESULT, {})

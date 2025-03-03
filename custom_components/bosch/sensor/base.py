@@ -1,13 +1,12 @@
 """Base sensor component."""
 
 import logging
-
-from bosch_thermostat_client.const import NAME, UNITS, VALUE
-from bosch_thermostat_client.const.ivt import INVALID
-from bosch_thermostat_client.sensors.sensor import Sensor as BoschSensor
 from homeassistant.const import EntityCategory
 from homeassistant.components.sensor import SensorEntity
 
+from ..client.const import NAME, UNITS, VALUE
+from ..client.const.ivt import INVALID
+from ..client.sensors.sensor import Sensor as BoschSensor
 from ..bosch_entity import BoschEntity
 from ..const import UNITS_CONVERTER
 
@@ -87,7 +86,7 @@ class BoschBaseSensor(BoschEntity, SensorEntity):
 
     async def async_update(self):
         """Update state of device."""
-        _LOGGER.debug("Update of sensor %s called.", self.unique_id)
+        _LOGGER.debug("Update of %s called.", self.unique_id)
         data = self._bosch_object.get_property(self._attr_uri)
 
         def get_units():

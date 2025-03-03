@@ -9,14 +9,14 @@ from .exceptions import (
 )
 from .gateway import gateway_chooser
 
-from .version import __version__ as version
+#from .version import __version__ as version
 
 name = "bosch_thermostat_client"
 
 
 __all__ = [
     "gateway_chooser",
-    "version",
+#    "version",
     "BoschException",
     "DeviceException",
     "ResponseException",

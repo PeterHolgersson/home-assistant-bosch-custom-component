@@ -1,11 +1,11 @@
 import logging
-from bosch_thermostat_client.const import (
+from ..const import (
     RESULT,
     SELECT,
     URI,
     VALUE,
 )
-from bosch_thermostat_client.const.ivt import ALLOWED_VALUES
+from ..const.ivt import ALLOWED_VALUES
 from .switch import BaseSwitch
 
 _LOGGER = logging.getLogger(__name__)

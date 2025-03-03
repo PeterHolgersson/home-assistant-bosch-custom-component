@@ -1,7 +1,9 @@
 from __future__ import annotations
+from datetime import datetime, timedelta
+
 import asyncio
 import logging
-from bosch_thermostat_client.const import (
+from ..const import (
     RESULT,
     URI,
     VALUE,
@@ -12,9 +14,9 @@ from bosch_thermostat_client.const import (
     ENERGY_WATT_HOUR,
 )
 from .sensor import Sensor
-from bosch_thermostat_client.exceptions import DeviceException
+from ..exceptions import DeviceException
 
-from datetime import datetime, timedelta
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -52,19 +54,22 @@ class RecordingSensor(Sensor):
             time_interval = time.strftime("%Y-%m-%d")
             self._data[self.attr_id][RESULT][VALUE] = []
             if result_interval != time_interval:
-                _LOGGER.warn(
+                _LOGGER.warning(
                     "Different time returned by API than expected, exiting."
                 )
                 return
             last_hour = time.replace(minute=0, second=0, microsecond=0)
             for idx, recording in enumerate(result[RECORDING]):
+                print(f"{self.name} Recording Y: {recording["y"]} Recording C: {recording["c"]}")
                 val = (
                     0
-                    if recording["y"] == 0 or recording["c"] == 0
+                    if recording["c"] == 0 #recording["y"] == 0 or
                     else round((recording["y"] / recording["c"]), 1)
                 )
                 if val == 0:
+                    print(f"{self.name} Recording Y: {recording["y"]} Recording C: {recording["c"]} val: {val}")
                     continue
+                print(f"{self.name} Recording Y: {recording["y"]} Recording C: {recording["c"]}")
                 self._data[self.attr_id][RESULT][VALUE].append(
                     {
                         "d": last_hour.replace(hour=idx),
@@ -80,8 +85,8 @@ class RecordingSensor(Sensor):
             while current_date < stop_time:
                 uri = self.build_uri(time=current_date)
                 data = await self._connector.get(uri)
-                if not data:
-                    continue
+        #        if not data:
+        #            continue
                 if RECORDING in data:
                     for idx, recording in enumerate(data[RECORDING]):
                         _d = current_date.replace(
@@ -89,17 +94,19 @@ class RecordingSensor(Sensor):
                         )
                         val = (
                             0
-                            if recording["y"] == 0 or recording["c"] == 0
+                            if recording["c"] == 0 #recording["y"] == 0 or
                             else round((recording["y"] / recording["c"]), 1)
                         )
-                        if val == 0:
-                            continue
+#                        if val == 0:
+#                            print(f"{self.name} Recording Y: {recording["y"]} Recording C: {recording["c"]}")
+#                            continue
                         if start_time <= _d <= stop_time:
                             self._past_data[_d] = {
                                 "d": _d,
                                 VALUE: val,
                             }
                 current_date += timedelta(days=1)
+            print(f"{self.name} Past data: {self._past_data}")
             return self._past_data
 
     @property
@@ -122,6 +129,9 @@ class RecordingSensor(Sensor):
             self.process_results(result, time)
         except DeviceException as err:
             _LOGGER.error(
-                f"Can't update data for {self.name}. Trying uri: {self._data[URI]}. Error message: {err}"
+                "Can't update data for %s. Trying uri: %s. Error message: %s",
+                {self.name},
+                {self._data[URI]},
+                {err}
             )
             self._extra_message = f"Can't update data. Error: {err}"

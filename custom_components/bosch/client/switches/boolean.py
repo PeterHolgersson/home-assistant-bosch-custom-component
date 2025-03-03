@@ -1,5 +1,5 @@
-from bosch_thermostat_client.const.easycontrol import FALSE, TRUE
-from bosch_thermostat_client.const import BINARY, RESULT, URI, VALUE
+from ..const import FALSE, TRUE
+from ..const import BINARY, RESULT, URI, VALUE
 from .switch import BaseSwitch
 
 

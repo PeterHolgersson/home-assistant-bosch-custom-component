@@ -1,9 +1,10 @@
 """Main circuit object."""
+
 from __future__ import annotations
-from bosch_thermostat_client.switches import Switches
-from bosch_thermostat_client.schedule import Schedule
 import logging
-from bosch_thermostat_client.const import (
+from ..switches import Switches
+from ..schedule import Schedule
+from ..const import (
     ID,
     CURRENT_TEMP,
     OPERATION_MODE,
@@ -29,16 +30,17 @@ from bosch_thermostat_client.const import (
     DEFAULT_MAX_TEMP,
     DEFAULT_MIN_TEMP,
 )
-from bosch_thermostat_client.helper import BoschSingleEntity
-from bosch_thermostat_client.exceptions import DeviceException
-from bosch_thermostat_client.sensors import Sensors
+from ..helper import BoschSingleEntity
+from ..exceptions import DeviceException
+from ..sensors import Sensors
 
-from bosch_thermostat_client.operation_mode import OperationModeHelper
+from ..operation_mode import OperationModeHelper
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class BasicCircuit(BoschSingleEntity):
+    """Basic circuit."""
     def __init__(self, connector, attr_id, db, _type, bus_type, **kwargs):
         """Basic circuit init."""
         name = attr_id.split("/").pop()
@@ -81,18 +83,22 @@ class BasicCircuit(BoschSingleEntity):
 
     @property
     def state(self):
+        """State of the circuit."""
         return self._state
 
     @property
     def sensors(self):
+        """Sensors."""
         return self._sensors
 
     @property
     def regular_switches(self):
+        """Switches."""
         return self._switches
 
     @property
     def number_switches(self):
+        """Number switches."""
         return self._switches.number_switches
 
     async def initialize(self):
@@ -102,7 +108,8 @@ class BasicCircuit(BoschSingleEntity):
 
     @property
     def id(self):
-        """Get ID of circuit. Name might be overriden by eg Zone name, so id is always last part of URI."""
+        """Get ID of circuit. Name might be overriden by eg Zone name,
+            so id is always last part of URI."""
         return super().name
 
 
@@ -122,6 +129,7 @@ class Circuit(BasicCircuit):
 
     @property
     def support_target_temp(self):
+        """Target temp."""
         return True
 
     @property
@@ -136,11 +144,12 @@ class Circuit(BasicCircuit):
 
     @property
     def setpoint(self):
+        """Setpoint."""
         raise NotImplementedError
 
     async def set_service_call(self, uri, value):
         """WARNING! It doesn't check if value you send is good!."""
-        _LOGGER.info(f"Sending service call {uri} with {value}")
+        _LOGGER.info("Sending service call: %s with %s",{uri}, {value})
         uri = f"{self._main_uri}/{uri}"
         val = await self._connector.put(uri, value)
         return val
@@ -161,24 +170,29 @@ class Circuit(BasicCircuit):
         )
 
     def _find_ha_mode(self, ha_mode):
+        """Find mode in HA."""
         for v in self._hastates:
             if v[HA_NAME] == ha_mode:
                 return v[BOSCH_NAME]
 
     @property
     def _temp_setpoint(self):
+        """Temp setpoint."""
         return self._op_mode.temp_setpoint()
 
     @property
     def support_presets(self):
+        """Support presets."""
         return False
 
     @property
     def hvac_action(self):
+        """HVAC action."""
         return None
-    
+
     @property
     def extra_state_attributes(self) -> dict:
+        """Extra state attributes."""
         return {}
 
     async def update_temp_after_ha_mode(self, old_setpoint, new_mode, old_mode) -> int:
@@ -197,8 +211,7 @@ class Circuit(BasicCircuit):
                     )
                     self.process_results(result, self._temp_setpoint)
         except DeviceException as err:
-            _LOGGER.debug(f"Can't update data for mode {new_mode}. Error: {err}")
-            pass
+            _LOGGER.debug("Can't update data for mode: %s, Error: %s", {new_mode}, {err})
         if different_mode:
             return 1
         return 0
@@ -314,8 +327,16 @@ class Circuit(BasicCircuit):
 
 
 class CircuitWithSchedule(Circuit):
+    """Circuit with schedule."""
     def __init__(
-        self, connector, attr_id, db, _type, bus_type, current_date=None, **kwargs
+        self,
+        connector,
+        attr_id,
+        db,
+        _type,
+        bus_type,
+        current_date=None,
+        **kwargs
     ):
         super().__init__(
             connector=connector,
@@ -377,16 +398,18 @@ class CircuitWithSchedule(Circuit):
 
     @property
     def active_program_setpoint(self):
+        """Setpoint for active program."""
         return self._op_mode.temp_setpoint(self.schedule.active_program)
 
     def get_value_from_active_setpoint(self, prop_name):
-        activeSetpointValue = self.get_property(self.active_program_setpoint)
+        """Get value from active Setpoint."""
+        activesetpointvalue = self.get_property(self.active_program_setpoint)
         default = 0
         if prop_name == MIN_VALUE:
             default = DEFAULT_MIN_TEMP
         elif prop_name == MAX_VALUE:
             default = DEFAULT_MAX_TEMP
-        return activeSetpointValue.get(prop_name, default)
+        return activesetpointvalue.get(prop_name, default)
 
     async def update(self):
         """Update info about Circuit asynchronously."""

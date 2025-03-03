@@ -8,13 +8,13 @@ from slixmpp.exceptions import IqError, IqTimeout
 from slixmpp.xmlstream.handler import Callback
 from slixmpp.xmlstream.matcher import StanzaPath
 import asyncio
-from bosch_thermostat_client.exceptions import (
+from ...client.exceptions import (
     DeviceException,
     MsgException,
     EncryptionException,
     FailedAuthException
 )
-from bosch_thermostat_client.const import (
+from ...client.const import (
     GET,
     PUT,
     REQUEST_TIMEOUT,

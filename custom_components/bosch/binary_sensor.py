@@ -1,10 +1,10 @@
 """Support for Bosch Thermostat Binary Sensor."""
 import logging
 
-from bosch_thermostat_client.const import BINARY, ON, USED
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 
+from .client.const import BINARY, ON, USED
 from .bosch_entity import BoschEntity
 from .const import (
     BINARY_SENSOR,
@@ -91,7 +91,7 @@ class BoschBinarySensor(BoschEntity, BinarySensorEntity):
         def get_on_attr():
             if self._bosch_object.state.lower() == ON:
                 return True
-            elif (
+            if (
                 self._bosch_object.get_value(USED, "true").lower() == "true"
                 and self._bosch_object.state.lower() == USED
             ):

@@ -2,9 +2,11 @@
 from __future__ import annotations
 import logging
 from typing import Any
+from datetime import datetime
+import json
 
-from bosch_thermostat_client.circuits import Circuits
-from bosch_thermostat_client.const import (
+from ..circuits import Circuits
+from ..const import (
     DATE,
     DHW,
     DHW_CIRCUITS,
@@ -31,17 +33,15 @@ from bosch_thermostat_client.const import (
     CRAWL_SENSORS,
     SWITCHES,
 )
-from bosch_thermostat_client.db import get_custom_db, get_db_of_firmware, get_initial_db, async_get_errors
-from bosch_thermostat_client.exceptions import (
+from ..db import get_custom_db, get_db_of_firmware, get_initial_db, async_get_errors
+from ..exceptions import (
     DeviceException,
     FirmwareException,
     UnknownDevice,
 )
-from bosch_thermostat_client.helper import deep_into
-from bosch_thermostat_client.sensors import Sensors
-from bosch_thermostat_client.switches import Switches
-from datetime import datetime
-import json
+from ..helper import deep_into
+from ..sensors import Sensors
+from ..switches import Switches
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -82,7 +82,7 @@ class BaseGateway:
             self._db = await get_db_of_firmware(self._device[TYPE], self._firmware_version)
             if self._db:
                 _LOGGER.debug(
-                    f"Loading database: {self._device[TYPE]} for firmware {self._firmware_version}"
+                    "Loading database: %s for firmware: %s", {self._device[TYPE]}, {self._firmware_version}
                 )
                 initial_db.pop(MODELS, None)
                 self._db.update(initial_db)
@@ -90,10 +90,9 @@ class BaseGateway:
                 self._initialized = True
                 return
             raise FirmwareException(
-                "You might have unsupported firmware version %s"
-                % self._firmware_version
+                f"You might have unsupported firmware version: {self._firmware_version}"
             )
-        raise UnknownDevice("Your device is unknown %s" % json.dumps(self._device))
+        raise UnknownDevice(f"Your device is unknown: {json.dumps(self._device)}")
 
     async def custom_initialize(self, extra_db):
         "Custom initialization of component"

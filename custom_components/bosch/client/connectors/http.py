@@ -9,9 +9,9 @@ from aiohttp.client_exceptions import (
     ClientError,
 )
 
-from bosch_thermostat_client.const.ivt import HTTP_HEADER, IVT
-from bosch_thermostat_client.const import APP_JSON, GET, PUT
-from bosch_thermostat_client.exceptions import DeviceException, ResponseException
+from ..const.ivt import HTTP_HEADER, IVT
+from ..const import APP_JSON, GET, PUT
+from ..exceptions import DeviceException, ResponseException
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -30,6 +30,7 @@ class HttpConnector:
 
     @property
     def encryption_key(self):
+        """Define encryption key."""
         return self._encryption.key
 
     async def _request(self, method, path, **kwargs):
@@ -54,15 +55,15 @@ class HttpConnector:
             async with method(self._format_url(path), **kwargs) as res:
                 return await get_response(method.__name__, res)
         except ClientResponseError as err:
-            raise DeviceException(f"URI {path} doesn not exist: {err}")
+            raise DeviceException(f"URI {path} doesn not exist: {err}") from err
         except ClientConnectorError as err:
-            raise DeviceException(err)
+            raise DeviceException(err) from err
         except ResponseException as err:
-            raise DeviceException(f"Error requesting data from {path}: {err}")
+            raise DeviceException(f"Error requesting data from {path}: {err}") from err
         except ClientError as err:
-            raise DeviceException(f"Error connecting to client {path}: {err}")
+            raise DeviceException(f"Error connecting to client {path}: {err}") from err
         except AsyncTimeout:
-            raise DeviceException(f"Connection timed out for {path}.")
+            raise DeviceException(f"Connection timed out for {path}.") from err
 
     def _format_url(self, path):
         """Format URL to make requests to gateway."""
@@ -98,5 +99,6 @@ class HttpConnector:
             )
 
     async def close(self, force=False):
+        """Close connection."""
         if force:
             await self._websession.close()

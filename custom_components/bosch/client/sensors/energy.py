@@ -1,16 +1,21 @@
 from __future__ import annotations
+from datetime import datetime, timedelta
+
 import asyncio
 import logging
-from bosch_thermostat_client.const import (
+from ..const import (
+    ENERGY,
+    PAGINATION,
     RESULT,
+    TRUE,
     URI,
+    USED,
     VALUE,
 )
-from bosch_thermostat_client.const.easycontrol import ENERGY, PAGINATION, TRUE, USED
 from .sensor import Sensor
-from bosch_thermostat_client.exceptions import DeviceException
+from ..exceptions import DeviceException
 
-from datetime import datetime, timedelta
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -74,7 +79,7 @@ class EnergySensor(Sensor):
         today = datetime.today()
         strf_today = today.strftime("%d-%m-%Y")
         if stop_time.date() > today.date() or start_time.date() > today.date():
-            _LOGGER.warn("Can't fetch data from the future! Exiting.")
+            _LOGGER.warning("Can't fetch data from the future! Exiting.")
             return output
         days_to_find = [
             (start_time + timedelta(x)).strftime("%d-%m-%Y")
@@ -96,7 +101,8 @@ class EnergySensor(Sensor):
                         pass
                 else:
                     _LOGGER.debug(
-                        "Day not found in current past data. Searching in API. It can take some time!"
+                        "Day not found in current past data. Searching in API.\
+                             It can take some time!"
                     )
                     for i in range(self.page_number - 1, -1, -1):
                         if i in pages_fetched:
@@ -159,6 +165,9 @@ class EnergySensor(Sensor):
                     self.process_results(result, time)
         except DeviceException as err:
             _LOGGER.error(
-                f"Can't update data for {self.name}. Trying uri: {self._data[URI]}. Error message: {err}"
+                "Can't update data for %s. Trying uri: %s. Error message: %s",
+                {self.name},
+                {self._data[URI]},
+                {err}
             )
             self._extra_message = f"Can't update data. Error: {err}"

@@ -1,4 +1,4 @@
-from bosch_thermostat_client.const import (
+from ..const import (
     VALUE,
     SETPOINT,
     TYPE,
@@ -7,7 +7,7 @@ from bosch_thermostat_client.const import (
     MANUAL,
     WRITE,
 )
-from bosch_thermostat_client.const.ivt import ALLOWED_VALUES
+from ..const.ivt import ALLOWED_VALUES
 
 WRITE_SETPOINT = f"{SETPOINT}_{WRITE}"
 

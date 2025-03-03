@@ -1,9 +1,9 @@
-from bosch_thermostat_client.circuits.easycontrol.base import EasycontrolCircuit
+from ...circuits.easycontrol.base import EasycontrolCircuit
 from ..circuit import CircuitWithSchedule
-from bosch_thermostat_client.const import (
+from ...const import (
     NAME,
 )
-from bosch_thermostat_client.const.easycontrol import CIRCUIT_TYPES
+from ...const.easycontrol import CIRCUIT_TYPES
 
 
 class EasyDhwCircuit(CircuitWithSchedule, EasycontrolCircuit):

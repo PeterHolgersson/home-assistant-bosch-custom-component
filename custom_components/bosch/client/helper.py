@@ -1,9 +1,10 @@
 """Helper functions."""
 
+import base64
 import re
 import logging
 from datetime import datetime, timedelta
-from bosch_thermostat_client.const import (
+from ..client.const import (
     ID,
     NAME,
     PATH,
@@ -26,11 +27,10 @@ from bosch_thermostat_client.const import (
     ENERGY_HISTORY_ENTRIES,
     ENERGY_HISTORY,
 )
-from bosch_thermostat_client.const.easycontrol import STEP_SIZE
-from bosch_thermostat_client.const.ivt import ALLOWED_VALUES, STATE, INVALID
+from ..client.const import STEP_SIZE
+from ..client.const.ivt import ALLOWED_VALUES, STATE, INVALID
 
 from .exceptions import DeviceException, EncryptionException
-import base64
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -44,9 +44,9 @@ CONFIDENTIAL_URI = (
     "/gateway/user/phone",
     "/system/location/coordinates",
     "/system/location/localization",
-    "/gateway/serialnumber",
-    "/gateway/remoteServicesPassword",
-    "/gateway/identificationKey",
+ #   "/gateway/serialnumber",
+ #   "/gateway/remoteServicesPassword",
+ #   "/gateway/identificationKey",
 )
 
 
@@ -65,7 +65,7 @@ def check_base64(s):
 
 
 def get_all_intervals():
-    yesterday = datetime.today() - timedelta(days=1)
+    yesterday = datetime.today() - timedelta(days=0) # was -1
     ytt = yesterday.timetuple()
     yttiso = yesterday.isocalendar()
     return [
@@ -277,7 +277,10 @@ class BoschSingleEntity:
                     state = True
                 except DeviceException as err:
                     _LOGGER.warning(
-                        f"Can't update data for {self.name}. Trying uri: {item[URI]}. Error message: {err}"
+                        "Can't update data for %s. Trying uri: %s. Error message: %s",
+                        {self.name},
+                        {item[URI]},
+                        {err},
                     )
         self._state = state
         if not state:

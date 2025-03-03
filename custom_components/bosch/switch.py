@@ -5,7 +5,7 @@ For more details about this platform, please refer to the documentation at...
 """
 import logging
 
-from bosch_thermostat_client.const import GATEWAY
+from .client.const import GATEWAY
 from homeassistant.components.switch import SwitchEntity
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 

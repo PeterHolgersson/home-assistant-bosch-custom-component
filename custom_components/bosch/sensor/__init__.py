@@ -1,17 +1,25 @@
 """Support for Bosch Thermostat Sensor."""
+from homeassistant.helpers import entity_platform
+from homeassistant.helpers.dispatcher import async_dispatcher_send
 
-from bosch_thermostat_client.const import (
+from ..client.const import (
     ECUS_RECORDING,
     RECORDING,
     REGULAR,
     SENSOR,
     SENSORS,
+    ENERGY,
 )
-from bosch_thermostat_client.const.easycontrol import ENERGY
-from homeassistant.helpers import entity_platform
-from homeassistant.helpers.dispatcher import async_dispatcher_send
 
-from ..const import CIRCUITS, DOMAIN, GATEWAY, SERVICE_MOVE_OLD_DATA, SIGNAL_BOSCH, UUID
+from ..const import (
+    CIRCUITS,
+    DOMAIN,
+    GATEWAY,
+    SERVICE_MOVE_OLD_DATA,
+    SIGNAL_BOSCH,
+    UUID,
+)
+
 from .bosch import BoschSensor
 from .circuit import CircuitSensor
 from .energy import EcusRecordingSensors, EnergySensor, EnergySensors
@@ -33,7 +41,6 @@ SensorKinds = {
     "notification": SENSOR,
 }
 
-
 async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up the Bosch Thermostat from a config entry."""
     uuid = config_entry.data[UUID]
@@ -47,6 +54,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     def get_sensors(sensor):
         if sensor.kind in (RECORDING, REGULAR, "notification"):
+            print("Testar lite", sensor.kind, sensor.name, sensor.state_class, sensor.device_class)
             kwargs = (
                 {
                     "new_stats_api": new_stats_api,
@@ -69,7 +77,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                     )
                 ],
             )
-        elif sensor.kind == ENERGY:
+        if sensor.kind == ENERGY:
             return (
                 SensorKinds[sensor.kind],
                 [
@@ -86,7 +94,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
                     for energy in EnergySensors
                 ],
             )
-        elif sensor.kind == ECUS_RECORDING:
+        if sensor.kind == ECUS_RECORDING:
             return (
                 SensorKinds[sensor.kind],
                 [

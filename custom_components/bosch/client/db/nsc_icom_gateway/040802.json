@@ -77,25 +77,26 @@
             }
         },
         "sensors": {
-            "supplyTemperatureSetpoint": {
-                "id": "supplyTemperatureSetpoint",
-                "name": "supplyTemperatureSetpoint"
-            },
             "suWiThreshold": {
                 "id": "suWiThreshold",
-                "name": "Summer Winter Threshold"
+                "name": "Summer Winter Threshold",
+                "state_class": "measurement",
+                "device_class": "temperature"
             },
             "pumpModulation": {
                 "id": "pumpModulation",
-                "name": "Pump Modulation"
+                "name": "Pump Modulation",
+                "state_class": "measurement"
             },
             "suWiSwitchMode": {
                 "id": "suWiSwitchMode",
-                "name": "Summer Winter Switchmode"
+                "name": "Summer Winter Switchmode",
+                "entity_category": "diagnostic"
             },
             "currentSuWiMode": {
                 "id": "currentSuWiMode",
-                "name": "Current Summer Winter Mode"
+                "name": "Current Summer Winter Mode",
+                "entity_category": "diagnostic"
             },
             "actualSupplyTemperature": {
                 "id": "actualSupplyTemperature",
@@ -108,6 +109,41 @@
                 "name": "Current room setpoint",
                 "state_class": "measurement",
                 "device_class": "temperature"
+            },
+            "operationMode": {
+                "id": "operationMode",
+                "name": "Operation mode",
+                "entity_category": "diagnostic"
+            },
+            "temperatureRoomSetpoint": {
+                "id": "temperatureRoomSetpoint",
+                "name": "Temperature Room Setpoint"
+            },
+            "manualRoomSetpoint": {
+                "id": "manualRoomSetpoint",
+                "name": "Manual Room Setpoint"
+            },
+            "holidayMode/activated": {
+                "id": "holidayMode/activated",
+                "name": "holidayMode activated",
+                "entity_category": "diagnostic"
+            },
+            "temporaryRoomSetpoint": {
+                "id": "temporaryRoomSetpoint",
+                "name": "Temporary Room Setpoint"
+            },
+            "temperatureLevels/eco": {
+                "id": "temperatureLevels/eco",
+                "name": "Temperature Level ECO"
+            },
+            "status": {
+                "id": "status",
+                "name": "Status",
+                "entity_category": "diagnostic"
+            },
+            "temperatureLevels/comfort2": {
+                "id": "temperatureLevels/comfort2",
+                "name": "Temperature Level Comfort 2"
             }
         }
     },
@@ -176,7 +212,9 @@
             "current_temp": {
                 "id": "actualTemp",
                 "name": "Actual water temperature",
-                "type": "regular"
+                "type": "regular",
+                "device_class": "temperature",
+                "state_class": "measurement"
             },
             "operation_mode": {
                 "id": "operationMode",
@@ -222,11 +260,22 @@
         "sensors": {
             "waterFlow": {
                 "id": "waterFlow",
-                "name": "Water flow"
+                "name": "Water flow",
+                "device_class": "VOLUME_FLOW_RATE",
+                "state_class": "measurement"
             },
             "workingTime": {
                 "id": "workingTime",
-                "name": "Working time"
+                "name": "Working time",
+                "device_class": "duration",
+                "state_class": "measurement"
+            },
+            "currentSetpoint": {
+                "id": "currentSetpoint",
+                "name": "Current Setpoint",
+                "device_class": "temperature",
+                "state_class": "measurement",
+                "entity_category": "diagnostic"
             }
         },
         "switches": {
@@ -238,13 +287,49 @@
                 "id": "chargeDuration",
                 "name": "Charge duration",
                 "type": "number",
-                "defaultStep": 15.0
+                "defaultStep": 15.0,
+                "state_class": "measurement",
+                "device_class": "duration"
             },
             "singleChargeSetpoint": {
                 "id": "singleChargeSetpoint",
                 "name": "Charge setpoint",
                 "type": "number",
-                "defaultStep": 0.5
+                "defaultStep": 0.5,
+                "state_class": "measurement",
+                "device_class": "temperature"
+            },
+            "tempLevel_off": {
+                "id": "temperatureLevels/off",
+                "name": "Temp Level OFF",
+                "type": "number",
+                "device_class": "temperature",
+                "state_class": "measurement",
+                "entity_category": "diagnostic"
+            },
+            "tempLevel_low": {
+                "id": "temperatureLevels/low",
+                "name": "Temp Level LOW",
+                "type": "number",
+                "device_class": "temperature",
+                "state_class": "measurement",
+                "entity_category": "diagnostic"
+            },
+            "tempLevel_high": {
+                "id": "temperatureLevels/high",
+                "name": "Temp Level HIGH",
+                "type": "number",
+                "device_class": "temperature",
+                "state_class": "measurement",
+                "entity_category": "diagnostic"
+            },
+            "tempLevel_eco": {
+                "id": "temperatureLevels/eco",
+                "name": "Temp Level ECO",
+                "type": "number",
+                "device_class": "temperature",
+                "state_class": "measurement",
+                "entity_category": "diagnostic"
             }
         }
     },
@@ -293,31 +378,56 @@
         },
         "supply_t1_setpoint": {
             "id": "/system/sensors/temperatures/supply_t1_setpoint",
-            "name": "Supply temp setpoint"
+            "name": "Supply temp setpoint",
+            "state_class": "measurement",
+            "device_class": "temperature",
+            "entity_category": "diagnostic"
         },
         "supply_t1": {
             "id": "/system/sensors/temperatures/supply_t1",
-            "name": "Actual supply temp"
+            "name": "Actual supply temp",
+            "state_class": "measurement",
+            "device_class": "temperature"
         },
         "return": {
             "id": "/system/sensors/temperatures/return",
-            "name": "Return temp"
+            "name": "Return temp",
+            "state_class": "measurement",
+            "device_class": "temperature"
         },
         "switch": {
             "id": "/system/sensors/temperatures/switch",
-            "name": "Switch temp"
+            "name": "Switch temp",
+            "state_class": "measurement",
+            "device_class": "temperature"
+        },
+        "minOutdoorTemp": {
+            "id": "/system/minOutdoorTemp",
+            "name": "Min Outdoor Temp",
+            "state_class": "measurement",
+            "entity_category": "diagnostic"
         },
         "healthStatus": {
             "id": "/system/healthStatus",
-            "name": "Health status"
+            "name": "Health status",
+            "entity_category": "diagnostic"
         },
         "actualModulation": {
             "id": "/heatSources/actualModulation",
-            "name": "Actual modulation"
+            "name": "Actual modulation",
+            "state_class": "measurement"
+        },
+        "modulationsetpoint": {
+            "id": "/heatSources/burnerModulationSetpoint",
+            "name": "Modulation Setpoint",
+            "entity_category": "diagnostic"
         },
         "totalSystem": {
             "id": "/heatSources/workingTime/totalSystem",
-            "name": "Total system uptime"
+            "name": "Total system uptime",
+            "state_class": "measurement",
+            "device_class": "duration",
+            "entity_category": "diagnostic"
         },
         "energyConsumption": {
             "id": "/heatSources/energyMonitoring/consumption",
@@ -325,13 +435,27 @@
             "state_class": "total",
             "device_class": "energy"
         },
+        "comulatedenergy": {
+            "id": "/heatSources/cumulatedHeatEnergySecondBurner",
+            "name": "Comulated Energy",
+            "state_class": "total",
+            "device_class": "energy",
+            "entity_category": "diagnostic"
+        },
         "startDateTime": {
             "id": "/heatSources/energyMonitoring/startDateTime",
             "name": "Start time"
         },
-        "systemPressure": {
-            "id": "/heatSources/systemPressure",
-            "name": "System pressure"
+        "delaytimer": {
+            "id": "/heatSources/delayTimer",
+            "name": "Delay timer",
+            "entity_category": "diagnostic",
+            "type": "regular"
+        },
+        "powerSetpoint": {
+            "id": "/heatSources/powerSetpoint",
+            "name": "Power Setpoint",
+            "entity_category": "diagnostic"
         },
         "flameStatus": {
             "id": "/heatSources/flameStatus",
@@ -345,40 +469,82 @@
         },
         "numberOfStarts": {
             "id": "/heatSources/numberOfStarts",
-            "name": "numberOfStarts"
+            "name": "numberOfStarts",
+            "entity_category": "diagnostic"
         },
         "collectorTempIn": {
             "id": "/heatSources/sensors/collectorInTemp",
-            "name": "Collector temperature in"
+            "name": "Collector temperature in",
+            "state_class": "measurement",
+            "device_class": "temperature"
         },
         "collectorTempOut": {
             "id": "/heatSources/sensors/collectorOutTemp",
-            "name": "Collector temperature out"
+            "name": "Collector temperature out",
+            "state_class": "measurement",
+            "device_class": "temperature"
         },
         "notifications": {
             "id": "/notifications",
             "name": "Notifications"
+        },
+        "dateTime": {
+            "id": "/gateway/DateTime",
+            "name": "Date Time",
+            "entity_category": "diagnostic"
+        },
+        "updateStatus": {
+            "id": "/gateway/update/status",
+            "name": "Update Status",
+            "entity_category": "diagnostic"
         },
         "poolTemperature": {
             "id": "/heatSources/poolTemperature",
             "name": "Pool temperature",
             "state_class": "measurement",
             "device_class": "temperature"
+        },
+        "supplyTemperatureSetpoint": {
+            "id": "/heatSources/supplyTemperatureSetpoint",
+            "name": "supplyTemperatureSetpoint",
+            "entity_category": "diagnostic"
         }
     },
     "crawlSensors": [
         {
-            "uri": "/recordings",
+            "uri": "/recordings/heatSources/total",
             "deep": 4,
             "sensorType": "recording",
             "state_class": "total",
             "device_class": "energy"
+        },
+        {
+            "uri": "/recordings/heatingCircuits",
+            "deep": 4,
+            "sensorType": "recording",
+            "state_class": "measurement",
+            "device_class": "temperature"
+        },
+        {
+            "uri": "/recordings/dhwCircuits",
+            "deep": 4,
+            "sensorType": "recording",
+            "state_class": "measurement",
+            "device_class": "temperature"
+        },
+        {
+            "uri": "/recordings/system/sensors/temperatures",
+            "deep": 4,
+            "sensorType": "recording",
+            "state_class": "measurement",
+            "device_class": "temperature"
         }
     ],
     "switches": {
         "poolStatus": {
             "id": "/heatSources/poolStatus",
-            "name": "poolStatus"
+            "name": "poolStatus",
+            "entity_category": "diagnostic"
         },
         "poolSetpointTemperature": {
             "id": "/heatSources/poolSetpointTemperature",
@@ -400,12 +566,24 @@
             "name": "Holiday HC Mode",
             "type": "select"
         },
+        "instAcc": {
+            "id": "/gateway/instAccess",
+            "name": "Installation Access",
+            "type": "binary",
+            "entity_category": "diagnostic"
+        },
+        "instWriteAcc": {
+            "id": "/gateway/instWriteAccess",
+            "name": "Installation Write Access",
+            "type": "binary",
+            "entity_category": "diagnostic"
+        },
         "assignedTo": {
             "id": "/assignedTo",
             "crawl": true,
             "base": "/system/holidayModes",
             "name": "Holiday Mode Assigned To",
-            "type": "select"
+            "type": "binary"
         }
     }
 }

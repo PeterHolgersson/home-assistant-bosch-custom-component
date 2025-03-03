@@ -1,5 +1,6 @@
+"""Easy control zone module."""
 from .base import EasycontrolCircuit
-from bosch_thermostat_client.const import (
+from ...const import (
     HVAC_ACTION,
     HVAC_HEAT,
     HVAC_OFF,
@@ -10,10 +11,11 @@ from bosch_thermostat_client.const import (
     ACTIVE_PROGRAM,
     URI,
 )
-from bosch_thermostat_client.operation_mode import EasyControlOperationModeHelper
-from bosch_thermostat_client.const.easycontrol import IDLE, LOW_BATTERY, CIRCUIT_TYPES
+from ...operation_mode import EasyControlOperationModeHelper
+from ...const.easycontrol import IDLE, LOW_BATTERY, CIRCUIT_TYPES
 
 class EasyZoneCircuit(EasycontrolCircuit):
+    """Easy control zone circuit class."""
     def __init__(
         self, connector, attr_id, db, _type, bus_type, current_date=None, **kwargs
     ):
@@ -51,6 +53,7 @@ class EasyZoneCircuit(EasycontrolCircuit):
 
     @property
     def battery_state(self) -> bool:
+        """Battery state."""
         status = self.get_value(STATUS)
         return True if status == LOW_BATTERY else False
 
@@ -92,6 +95,7 @@ class EasyZoneCircuit(EasycontrolCircuit):
 
     @property
     def preset_modes(self):
+        """Preset modes."""
         return self._zone_program.preset_names
 
     def get_activeswitchprogram(self):
@@ -108,9 +112,11 @@ class EasyZoneCircuit(EasycontrolCircuit):
 
     @property
     def preset_mode(self):
+        """Preset mode."""
         return self._zone_program.preset_name(self.get_value(ACTIVE_PROGRAM))
 
     async def set_preset_mode(self, preset_mode):
+        """Set preset mode."""
         preset_id = self._zone_program.get_preset_index_by_name(preset_mode)
         if not preset_id:
             return

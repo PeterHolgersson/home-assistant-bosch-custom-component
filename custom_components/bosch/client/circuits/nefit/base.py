@@ -1,6 +1,7 @@
+"""Nefit Base module."""
 import logging
 from ..circuit import Circuit
-from bosch_thermostat_client.const import (
+from ...const import (
     DHW,
     STATUS,
     DEFAULT_MIN_TEMP,
@@ -18,16 +19,17 @@ from bosch_thermostat_client.const import (
 )
 
 
-from bosch_thermostat_client.const.nefit import (
+from ...const.nefit import (
     CIRCUIT_TYPES,
 )
 
-from bosch_thermostat_client.operation_mode.nefit_dhw import NefitDhwOperationModeHelper
+from ...operation_mode.nefit_dhw import NefitDhwOperationModeHelper
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class NefitCircuit(Circuit):
+    """Nefit circuit class."""
     def __init__(self, connector, attr_id, db, _type, bus_type, current_date, **kwargs):
         super().__init__(connector, attr_id, db, CIRCUIT_TYPES[_type], bus_type)
         if _type == DHW:
@@ -87,7 +89,8 @@ class NefitCircuit(Circuit):
                     self._data[self._temp_setpoint][RESULT][VALUE] = temperature
                 return True
         _LOGGER.error(
-            "Setting temperature not allowed in this mode. Temperature is probably out of range MIN-MAX!"
+            "Setting temperature not allowed in this mode.\
+                Temperature is probably out of range MIN-MAX!"
         )
         return False
 

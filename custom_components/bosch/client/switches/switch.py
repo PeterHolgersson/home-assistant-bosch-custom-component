@@ -1,15 +1,15 @@
 from __future__ import annotations
 import logging
 from typing import Any
-from bosch_thermostat_client.const import (
+from ..const import (
     RESULT,
     URI,
     TYPE,
     VALUE,
     REGULAR,
 )
-from bosch_thermostat_client.const.ivt import ALLOWED_VALUES, INVALID
-from bosch_thermostat_client.helper import BoschSingleEntity
+from ..const.ivt import ALLOWED_VALUES, INVALID
+from ..helper import BoschSingleEntity
 
 _LOGGER = logging.getLogger(__name__)
 

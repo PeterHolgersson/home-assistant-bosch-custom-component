@@ -5,16 +5,14 @@ import logging
 import json
 import os
 
-from bosch_thermostat_client.const import DEFAULT, FIRMWARE_VERSION
-from bosch_thermostat_client.const.nefit import NEFIT
-from bosch_thermostat_client.const.ivt import (
+from ..const import DEFAULT, FIRMWARE_VERSION
+from ..const.ivt import (
     CAN,
     IVT,
     NSC_ICOM_GATEWAY,
     RC300_RC200,
     MBLAN,
 )
-from bosch_thermostat_client.const.easycontrol import EASYCONTROL
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -25,13 +23,12 @@ DEVICE_TYPES = {
     DEFAULT: "default/{}.json",
     CAN: "can/{}.json",
     MBLAN: "mblan/{}.json",
-    NEFIT: "nefit/{}.json",
     NSC_ICOM_GATEWAY: "nsc_icom_gateway/{}.json",
-    EASYCONTROL: "easycontrol/{}.json",
 }
 
 
 async def async_open_json(file):
+    """Def JSON file."""
     return await asyncio.to_thread(open_json, file)
 
 
@@ -47,8 +44,8 @@ def open_json(file):
 
 
 async def get_initial_db(device_type):
-    filename = os.path.join(MAINPATH, f"db_{device_type}.json")
     """Get initial db. Same for all devices."""
+    filename = os.path.join(MAINPATH, f"db_{device_type}.json")
     return await async_open_json(filename)
 
 
@@ -91,10 +88,6 @@ def get_easycontrol_errors() -> dict:
 
 async def async_get_errors(device_type) -> dict:
     """Get error codes of all devices."""
-    if device_type == EASYCONTROL:
-        return await asyncio.to_thread(get_easycontrol_errors)
-    elif device_type == NEFIT:
-        return await asyncio.to_thread(get_nefit_errors)
-    elif device_type == IVT:
+    if device_type == IVT:
         return (await asyncio.to_thread(get_nefit_errors)) | (await asyncio.to_thread(get_ivt_errors))
     return {}

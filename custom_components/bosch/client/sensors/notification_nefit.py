@@ -1,7 +1,7 @@
 from errno import errorcode
-from bosch_thermostat_client.db import get_nefit_errors
+from ...client.db import get_nefit_errors
 from .sensor import Sensor
-from bosch_thermostat_client.const import (
+from ...client.const import (
     MIN_VALUE,
     RESULT,
     TYPE,

@@ -1,7 +1,7 @@
 """
 Operation mode helper for DHW.
 """
-from bosch_thermostat_client.const import AUTO, MANUAL, USED, VALUE, ON, OFF
+from ..const import AUTO, MANUAL, USED, VALUE, ON, OFF
 from .base import OperationModeHelper
 
 

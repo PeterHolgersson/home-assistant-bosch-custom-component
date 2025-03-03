@@ -2,7 +2,7 @@
 from __future__ import annotations
 import logging
 from datetime import timedelta, datetime
-from bosch_thermostat_client.const import UNITS
+from ..client.const import UNITS
 from .statistic_helper import StatisticHelper
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
 from homeassistant.const import (
@@ -86,6 +86,7 @@ class EnergySensor(StatisticHelper):
 
         super().__init__(name=sensor_attributes.get("name"), uuid=uuid, **kwargs)
         self._unit_of_measurement = sensor_attributes.get(UNITS)
+ #       print(sensor_attributes.get(UNITS))
         self._attr_device_class = sensor_attributes.get(
             "deviceClass", SensorDeviceClass.ENERGY
         )
@@ -94,7 +95,7 @@ class EnergySensor(StatisticHelper):
             and self._attr_device_class == SensorDeviceClass.TEMPERATURE
         ):
             self._attr_device_class = SensorStateClass.MEASUREMENT
-
+ #       print(self._attr_state_class)
     @property
     def device_name(self) -> str:
         """Device name."""

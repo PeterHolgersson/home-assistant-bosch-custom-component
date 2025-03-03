@@ -3,7 +3,6 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from bosch_thermostat_client.const import HVAC_HEAT, HVAC_OFF, SETPOINT
 from homeassistant.components.climate import ClimateEntity
 from homeassistant.components.climate.const import (
     HVACAction,
@@ -12,6 +11,7 @@ from homeassistant.components.climate.const import (
 from homeassistant.const import ATTR_TEMPERATURE
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 
+from .client.const import HVAC_HEAT, HVAC_OFF, SETPOINT
 from .bosch_entity import BoschClimateWaterEntity
 from .const import (
     BOSCH_STATE,
@@ -96,7 +96,7 @@ class BoschThermostat(BoschClimateWaterEntity, ClimateEntity):
 
     async def async_set_hvac_mode(self, hvac_mode):
         """Set operation mode."""
-        _LOGGER.debug(f"Setting operation mode {hvac_mode}.")
+        _LOGGER.debug("Setting operation mode %s.", {hvac_mode})
 
         if self._optimistic_mode:
             _old_hvac_mode = self._bosch_object.ha_mode
@@ -114,7 +114,7 @@ class BoschThermostat(BoschClimateWaterEntity, ClimateEntity):
     async def async_set_temperature(self, **kwargs):
         """Set new target temperature."""
         temperature = kwargs.get(ATTR_TEMPERATURE)
-        _LOGGER.debug(f"Setting target temperature {temperature}.")
+        _LOGGER.debug("Setting target temperature: %s.", {temperature})
         await self._bosch_object.set_temperature(temperature)
         if self._optimistic_mode:
             self._target_temperature = temperature

@@ -3,8 +3,8 @@
 import json
 import logging
 
-from bosch_thermostat_client.connectors import connector_ivt_chooser
-from bosch_thermostat_client.const import (
+from ..connectors import connector_ivt_chooser
+from ..const import (
     DHW,
     EMS,
     GATEWAY,
@@ -15,15 +15,15 @@ from bosch_thermostat_client.const import (
     VALUE,
     VALUES,
 )
-from bosch_thermostat_client.const.ivt import (
+from ..const.ivt import (
     CAN,
     CIRCUIT_TYPES,
     IVT,
     IVT_MBLAN,
     SYSTEM_INFO,
 )
-from bosch_thermostat_client.encryption import IVTEncryption as Encryption
-from bosch_thermostat_client.exceptions import DeviceException
+from ..encryption import IVTEncryption as Encryption
+from ..exceptions import DeviceException
 
 from .base import BaseGateway
 

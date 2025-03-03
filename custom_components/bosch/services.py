@@ -9,7 +9,7 @@ from homeassistant.util import dt as dt_util
 from homeassistant.config_entries import ConfigEntry
 import homeassistant.helpers.device_registry as dr
 import homeassistant.helpers.config_validation as cv
-from bosch_thermostat_client.const import RECORDING
+from .client.const import RECORDING
 from .const import (
     DOMAIN,
     SERVICE_DEBUG,
@@ -53,8 +53,8 @@ def find_gateway_entry(hass: HomeAssistant, devices_id: str) -> list[ConfigEntry
                     continue
                 config_entries.extend(device_entries)
         else:
-            _LOGGER.warn(
-                f"Device '{target}' not found in device registry"
+            _LOGGER.warning(
+                "Device %s not found in device registry", target
             )
     bosch_gateway_entries = []
     for entry in hass.data[DOMAIN].values():
@@ -95,7 +95,10 @@ def async_register_services(hass: HomeAssistant, entry: ConfigEntry) -> None:
 
     async def async_handle_thermostat_refresh(service_call: ServiceCall):
         """Request update of thermostat manually."""
-        _gateway_entries = find_gateway_entry(hass=hass, devices_id=service_call.data[ATTR_DEVICE_ID])
+        _gateway_entries = find_gateway_entry(
+        hass=hass,
+        devices_id=service_call.data[ATTR_DEVICE_ID]
+        )
         if not _gateway_entries:
             return
         for _gateway_entry in _gateway_entries:
@@ -115,7 +118,9 @@ def async_register_services(hass: HomeAssistant, entry: ConfigEntry) -> None:
         """Request update of recording sensor manually."""
         statistic_id = service_call.data.get("statistic_id")
         day = dt_util.start_of_local_day(service_call.data.get("day"))
-        _gateway_entries = find_gateway_entry(hass=hass, devices_id=service_call.data[ATTR_DEVICE_ID])
+        _gateway_entries = find_gateway_entry(
+            hass=hass, devices_id=service_call.data[ATTR_DEVICE_ID]
+            )
         if not _gateway_entries:
             _LOGGER.debug("No sensor found")
             return
@@ -130,7 +135,10 @@ def async_register_services(hass: HomeAssistant, entry: ConfigEntry) -> None:
 
     async def async_handle_get(service_call: ServiceCall) -> ServiceResponse:
         """Request update of recording sensor manually."""
-        _gateway_entries = find_gateway_entry(hass=hass, devices_id=service_call.data[ATTR_DEVICE_ID])
+        _gateway_entries = find_gateway_entry(
+            hass=hass,
+            devices_id=service_call.data[ATTR_DEVICE_ID]
+            )
         if not _gateway_entries:
             data = ""
         _path = service_call.data.get("path")
@@ -163,7 +171,6 @@ def async_register_services(hass: HomeAssistant, entry: ConfigEntry) -> None:
         return {
             "data": data
         }
-        
     hass.services.async_register(
         DOMAIN,
         SERVICE_UPDATE,

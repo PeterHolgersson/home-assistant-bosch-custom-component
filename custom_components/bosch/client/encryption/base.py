@@ -6,8 +6,8 @@ import binascii
 import json
 from pyaes import PADDING_NONE, AESModeOfOperationECB, Decrypter, Encrypter
 
-from bosch_thermostat_client.const import BS
-from bosch_thermostat_client.exceptions import EncryptionException, DeviceException
+from ..const import BS
+from ..exceptions import EncryptionException, DeviceException
 
 _LOGGER = logging.getLogger(__name__)
 

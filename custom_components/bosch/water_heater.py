@@ -6,7 +6,7 @@ For more details about this platform, please refer to the documentation at...
 from __future__ import annotations
 import logging
 
-from bosch_thermostat_client.const import GATEWAY, SETPOINT
+from .client.const import GATEWAY, SETPOINT
 from homeassistant.components.water_heater import (
     ATTR_TARGET_TEMP_HIGH,
     ATTR_TARGET_TEMP_LOW,
@@ -132,7 +132,7 @@ class BoschWaterHeater(BoschClimateWaterEntity, WaterHeaterEntity):
 
     async def async_set_operation_mode(self, operation_mode):
         """Set operation mode."""
-        _LOGGER.debug(f"Setting operation mode of {self._name} to {operation_mode}.")
+        _LOGGER.debug("Setting operation mode of %s to %s.", {self._name}, {operation_mode})
         status = await self.bosch_object.set_ha_mode(operation_mode)
         if status > 0:
             return True

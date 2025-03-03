@@ -1,5 +1,5 @@
 import logging
-from bosch_thermostat_client.const import (
+from ..const import (
     NUMBER,
     RESULT,
     URI,
@@ -8,8 +8,7 @@ from bosch_thermostat_client.const import (
     MAX_VALUE,
     MIN_VALUE,
 )
-from bosch_thermostat_client.const.easycontrol import STEP_SIZE
-from bosch_thermostat_client.helper import BoschSingleEntity
+from ..const import STEP_SIZE
 from .switch import BaseSwitch
 
 _LOGGER = logging.getLogger(__name__)

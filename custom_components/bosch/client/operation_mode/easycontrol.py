@@ -1,6 +1,6 @@
 from .base import OperationModeHelper
-from bosch_thermostat_client.const import MANUAL, SETPOINT, USED, VALUE
-from bosch_thermostat_client.const.easycontrol import TARGET_TEMP
+from ..const import MANUAL, SETPOINT, USED, VALUE
+from ..const.easycontrol import TARGET_TEMP
 
 
 class EasyControlOperationModeHelper(OperationModeHelper):

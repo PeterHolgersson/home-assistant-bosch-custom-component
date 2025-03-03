@@ -4,12 +4,13 @@ from __future__ import annotations
 import logging
 import asyncio
 from datetime import datetime, timedelta
+from sqlalchemy.exc import IntegrityError
 from homeassistant.components.recorder.models import (
     StatisticData,
     StatisticMetaData,
     datetime_to_timestamp_or_none,
 )
-from sqlalchemy.exc import IntegrityError
+
 from homeassistant.util import dt as dt_util
 
 try:
@@ -72,15 +73,16 @@ class StatisticHelper(BoschBaseSensor):
     def statistic_metadata(self) -> StatisticMetaData:
         """Statistic Metadata recorder model class."""
         return StatisticMetaData(
-            has_mean=False,
-            has_sum=True,
-            name=f"Stats {self._name}",
-            source=self._domain_name.lower(),
-            statistic_id=self.statistic_id,
-            unit_of_measurement=self._unit_of_measurement,
+            has_mean = False,
+            has_sum = True,
+            name = f"Stats {self._name}",
+            source = self._domain_name.lower(),
+            statistic_id = self.statistic_id,
+            unit_of_measurement = self._unit_of_measurement,
         )
 
     async def get_last_stat(self) -> dict[str, list[StatisticsRow]]:
+        """Get last statistics."""
         return await get_instance(self.hass).async_add_executor_job(
             get_last_statistics,
             self.hass,
@@ -109,13 +111,18 @@ class StatisticHelper(BoschBaseSensor):
         """Add external statistics."""
         self._state = -17
         if not stats:
+            print("Statistics not here ",stats, self._name)
             return
+        print("%s Stats are here: %s", self._name, stats)
         async_add_external_statistics(self.hass, self.statistic_metadata, stats)
         self.async_schedule_update_ha_state()
 
     def get_last_stats_before_date(
-        self, last_stats: dict[str, list[StatisticsRow]], day: datetime
+        self,
+        last_stats: dict[str, list[StatisticsRow]],
+        day: datetime
     ):
+        """Get the last statistics before date."""
         day_stamp = datetime_to_timestamp_or_none(day)
         closest_stat = None
         for stat in last_stats[self.statistic_id]:

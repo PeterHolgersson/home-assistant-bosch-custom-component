@@ -3,15 +3,16 @@
 from __future__ import annotations
 from datetime import timedelta, datetime
 import logging
-from .statistic_helper import StatisticHelper
-
-from ..const import SIGNAL_RECORDING_UPDATE_BOSCH, UNITS_CONVERTER, VALUE
 from homeassistant.components.recorder.models import (
     StatisticData,
     timestamp_to_datetime_or_none,
 )
-from homeassistant.const import STATE_UNAVAILABLE
 from homeassistant.util import dt as dt_util
+
+from .statistic_helper import StatisticHelper
+from ..const import SIGNAL_RECORDING_UPDATE_BOSCH, UNITS_CONVERTER, VALUE
+
+#from homeassistant.const import STATE_UNAVAILABLE
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -42,9 +43,15 @@ class RecordingSensor(StatisticHelper):
             self._bosch_object.unit_of_measurement
         )
         self._attr_device_class = self._bosch_object.device_class
-        self._attr_state_class = self._bosch_object.state_class
+        if self._bosch_object.device_class == "temperature":
+            self._attr_state_class = "measurement"
+        else:
+            self._attr_state_class = self._bosch_object.state_class
+        if self._bosch_object.device_class == "temperature":
+            self._attr_last_reset = ""
+        else:
+            self._attr_last_reset = last_reset
 
-        self._attr_last_reset = last_reset
         if self._update_init:
             self._update_init = False
             self.async_schedule_update_ha_state()
@@ -57,6 +64,8 @@ class RecordingSensor(StatisticHelper):
         data = self._bosch_object.get_property(self._attr_uri)
         now = dt_util.now()
         if not data and not data.get(VALUE):
+            print("Dettta är datan som gör att jag inte går igenom",data, data.get(VALUE))
+            print("Jag hoppar över detta", self._name)
             return
 
         def get_last_full_hour() -> datetime:
@@ -68,9 +77,12 @@ class RecordingSensor(StatisticHelper):
 
         def find_idx():
             for row in data[VALUE]:
+                print("rad d:", row['d'])
                 if row["d"] == last_hour:
+                    print(self._name, row["d"])
                     return row.get(VALUE)
-            return 0.0 #STATE_UNAVAILABLE
+            print("Detta görs ej: ",self._name)
+            return -100.0 #STATE_UNAVAILABLE
 
         self._state = find_idx()
         self.attrs_write(last_reset=last_hour)
@@ -93,16 +105,19 @@ class RecordingSensor(StatisticHelper):
             await self.async_old_gather_update()
 
     async def _upsert_past_statistics(
-        self, start: datetime, stop: datetime
+        self,
+        start: datetime,
+        stop: datetime
     ) -> None:
         now = dt_util.now()
         diff = now - start
         if now.day == start.day:
-            _LOGGER.warn("Can't upsert today date. Try again tomorrow.")
+            _LOGGER.warning("Can't upsert today date. Try again tomorrow.")
             return
         if diff > timedelta(days=60):
-            _LOGGER.warn(
-                "Update more than 60 days might take some time! Component will try to do that anyway!"
+            _LOGGER.warning(
+                "Update more than 60 days might take some time!\
+                Component will try to do that anyway!"
             )
         stats = await self.fetch_past_data(
             start_time=start, stop_time=start + timedelta(hours=26)
@@ -128,7 +143,10 @@ class RecordingSensor(StatisticHelper):
                 _state = +stat["value"]
                 _sum += _state  # increase sum
                 _LOGGER.debug(
-                    "Putting past state to statistic table with id: %s. Date: %s, state: %s, sum: %s.",
+                    "Putting past state to statistic table with id: %s. \
+                    Date: %s, \
+                    State: %s, \
+                    Sum: %s.",
                     self.statistic_id,
                     current_time,
                     _state,
@@ -141,6 +159,7 @@ class RecordingSensor(StatisticHelper):
                 )
                 stats_dict[current_ts] = None
             else:
+                print(f"Rad 172 recording.py: {StatisticData([current_time], [_state], [_sum])}")
                 out[current_ts] = StatisticData(
                     start=current_time,
                     state=0,
@@ -166,12 +185,13 @@ class RecordingSensor(StatisticHelper):
     def append_statistics(
         self, stats: list, sum: float, now: datetime
     ) -> float:
+        """Append statistics."""
         statistics_to_push = []
         for stat in stats:
             _date: datetime = stat["d"]
             _state = stat["value"]
-            if _state == 0:
-                continue
+#            if _state == 0:
+#                continue
             sum += _state
             _LOGGER.debug(
                 "Appending day to statistic table with id: %s. Date: %s, state: %s, sum: %s.",
@@ -200,12 +220,13 @@ class RecordingSensor(StatisticHelper):
             _LOGGER.debug(
                 "Last stats not exist. Trying to fetch last 30 days of data."
             )
+            print(self._name, len(last_stat),  len(last_stat[self.statistic_id]))
             start_time = now - timedelta(days=30)
             all_stats = await self.fetch_past_data(
                 start_time=start_time, stop_time=now
             )
             if not all_stats:
-                _LOGGER.warn("Stats not found.")
+                _LOGGER.warning("Stats not found.")
                 return
             all_stats = list(all_stats.values())
             self.append_statistics(stats=all_stats, sum=_sum, now=now)
@@ -232,7 +253,8 @@ class RecordingSensor(StatisticHelper):
 
         async def get_last_stats_from_bosch_api():
             last_stats_row = self.get_last_stats_before_date(
-                last_stats=last_stats, day=start_of_day
+                last_stats=last_stats,
+                day=start_of_day
             )
             start_time = last_stats_row.get("start")
             _sum = last_stats_row.get("sum", 0)
@@ -256,6 +278,7 @@ class RecordingSensor(StatisticHelper):
                 bosch_data = await self.fetch_past_data(
                     start_time=start_time, stop_time=now
                 )
+                print(f"row: {_sum}")
                 return (
                     [
                         row

@@ -1,13 +1,15 @@
+"""Heating module."""
 import logging
 from .base import NefitCircuit
-from bosch_thermostat_client.const import RESULT, VALUE, URI, ON, WRITE
-from bosch_thermostat_client.const.nefit import MANUAL_OVERRIDE, MANUAL_STATUS
-from bosch_thermostat_client.exceptions import DeviceException
+from ...const import RESULT, VALUE, URI, ON, WRITE
+from ...const.nefit import MANUAL_OVERRIDE, MANUAL_STATUS
+from ...exceptions import DeviceException
 
 _LOGGER = logging.getLogger(__name__)
 
 
 class NefitHeatingCircuit(NefitCircuit):
+    """Heating class."""
     async def set_temperature(self, temperature):
         """Set temperature of Circuit."""
         target_temp = self.target_temperature
@@ -33,7 +35,8 @@ class NefitHeatingCircuit(NefitCircuit):
                     self._data[self._temp_setpoint][RESULT][VALUE] = temperature
                 return True
         _LOGGER.error(
-            "Setting temperature not allowed in this mode. Temperature is probably out of range MIN-MAX!"
+            "Setting temperature not allowed in this mode.\
+                Temperature is probably out of range MIN-MAX!"
         )
         return False
 
@@ -53,8 +56,7 @@ class NefitHeatingCircuit(NefitCircuit):
                 result = await self._connector.get(self._data[self._temp_setpoint][URI])
                 self.process_results(result, self._temp_setpoint)
         except DeviceException as err:
-            _LOGGER.debug(f"Can't update data for mode {new_mode}. Error: {err}")
-            pass
+            _LOGGER.debug("Can't update data for mode %s. Error: %s", {new_mode}, {err})
         if different_mode:
             return 1
         return 0

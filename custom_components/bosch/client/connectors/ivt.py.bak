@@ -1,6 +1,6 @@
 """XMPP Connector to talk to bosch."""
-from bosch_thermostat_client.const import PUT, GET, USER_AGENT, CONTENT_TYPE, APP_JSON
-from bosch_thermostat_client.const.ivt import TELEHEATER, IVT
+from ..const import PUT, GET, USER_AGENT, CONTENT_TYPE, APP_JSON
+from ..const.ivt import TELEHEATER, IVT
 from .xmpp import XMPPBaseConnector
 
 

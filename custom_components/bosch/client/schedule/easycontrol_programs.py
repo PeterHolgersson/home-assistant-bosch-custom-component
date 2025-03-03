@@ -2,8 +2,8 @@
 Class to control /program/list in EasyControl.
 """
 from datetime import datetime, timedelta
-from bosch_thermostat_client.const import NAME, ID, VALUE
-from bosch_thermostat_client.helper import check_base64
+from ...client.const import NAME, ID, VALUE
+from ...client.helper import check_base64
 
 
 class ZonePrograms:

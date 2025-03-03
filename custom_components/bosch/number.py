@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from bosch_thermostat_client.const import GATEWAY, NUMBER
+from .client.const import GATEWAY, NUMBER
 from homeassistant.components.number import NumberEntity
 from homeassistant.components.number.const import NumberMode
 from homeassistant.helpers.dispatcher import async_dispatcher_send

@@ -1,14 +1,14 @@
 import logging
 
-from bosch_thermostat_client.const import (
+from ..const import (
     NAME,
     RESULT,
     URI,
     REGULAR,
     VALUE,
 )
-from bosch_thermostat_client.exceptions import DeviceException
-from bosch_thermostat_client.helper import check_base64
+from ..exceptions import DeviceException
+from ..helper import check_base64
 
 from .sensor import Sensor
 
@@ -52,7 +52,10 @@ class CrawlSensor(Sensor):
             self._state = True
         except DeviceException as err:
             _LOGGER.error(
-                f"Can't update data for {self.name}. Trying uri: {item[URI]}. Error message: {err}"
+                "Can't update data for %s. Trying uri: %s. Error message: %s",
+                {self.name},
+                {item[URI]},
+                {err}
             )
             self._state = False
             self._extra_message = f"Can't update data. Error: {err}"
@@ -62,5 +65,4 @@ class CrawlSensor(Sensor):
         """Retrieve state of the circuit."""
         if self._kind == "array" and self._state_key:
             return self._data[self.attr_id].get(RESULT).get(self._state_key)
-        else:
-            return super().state
+        return super().state

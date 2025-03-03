@@ -1,6 +1,6 @@
 """Bosch Themrostat errors."""
 
-from bosch_thermostat_client.const import APP_JSON
+from ..client.const import APP_JSON
 
 
 class BoschException(Exception):

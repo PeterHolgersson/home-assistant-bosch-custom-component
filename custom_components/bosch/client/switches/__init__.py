@@ -1,7 +1,7 @@
 """
 Switches of Bosch thermostat.
 """
-from bosch_thermostat_client.const import (
+from ..const import (
     DEFAULT_STEP,
     ID,
     NAME,
@@ -12,12 +12,12 @@ from bosch_thermostat_client.const import (
     TURN_OFF,
     BINARY,
 )
-from bosch_thermostat_client.const.ivt import ALLOWED_VALUES
-from bosch_thermostat_client.const.easycontrol import USED, FALSE, TRUE
-from bosch_thermostat_client.helper import BoschEntities
+from ..const.ivt import ALLOWED_VALUES
+from ..const import USED, FALSE, TRUE
+from ..helper import BoschEntities
 
-from bosch_thermostat_client.exceptions import DeviceException
-from bosch_thermostat_client.switches.select import SelectSwitch
+from ..exceptions import DeviceException
+from ..switches.select import SelectSwitch
 from .switch import Switch
 from .boolean import BinarySwitch
 from .number import NumberSwitch

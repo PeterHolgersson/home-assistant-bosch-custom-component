@@ -1,4 +1,5 @@
-from bosch_thermostat_client.const import (
+"""Sensors."""
+from ..const import (
     ID,
     REGULAR,
     URI,
@@ -11,46 +12,46 @@ from bosch_thermostat_client.const import (
     DB_RECORD,
     STATE_CLASS,
     DEVICE_CLASS,
-    ECUS_RECORDING,
+#    ECUS_RECORDING,
     NAME,
 )
-from bosch_thermostat_client.const.ivt import IVT
-from bosch_thermostat_client.const.easycontrol import EASYCONTROL
-from bosch_thermostat_client.helper import (
+#from ..const.ivt import IVT
+#from ..const.easycontrol import EASYCONTROL
+from ..helper import (
     BoschEntities,
 )
-from bosch_thermostat_client.sensors.ecus_recording import EcusRecordingSensor
+#from ..sensors.ecus_recording import EcusRecordingSensor
 
 from .sensor import Sensor
 from .recording import RecordingSensor
 from .crawl import CrawlSensor
 from .energy import EnergySensor
-
+from .notification_ivt import NotificationSensor
 NOTIFICATIONS = "notifications"
 STATE = "state"
 ENERGY = "energy"
 
 
 def get_sensor_class(device_type, sensor_type):
-    print("de", device_type, sensor_type)
-    if device_type == IVT:
-        from .notification_ivt import NotificationSensor
-    elif device_type == EASYCONTROL:
-        from .notification_easycontrol import NotificationSensor
-    else:
-        from .notification_nefit import NotificationSensor
+    """Get sensor class."""
+ #   print("de", device_type, sensor_type)
+    #if device_type == IVT:
+
     return {
         NOTIFICATIONS: NotificationSensor,
         ENERGY: EnergySensor,
-        ECUS_RECORDING: EcusRecordingSensor,
+#        ECUS_RECORDING: EcusRecordingSensor,
     }.get(sensor_type, Sensor)
 
 
 def get_crawl_sensor_class(recording_type=False):
+    """Get sensor class."""
     return RecordingSensor if recording_type else CrawlSensor
 
 
 def get_device_class(uri, default_class="energy"):
+    """Get device class."""
+    x = uri.lower
     if any(x in uri.lower() for x in ["temp", "outdoor"]):
         return "temperature"
     return default_class
@@ -60,7 +61,13 @@ class Sensors(BoschEntities):
     """Sensors object containing multiple Sensor objects."""
 
     def __init__(
-        self, connector, sensors_db: dict | None = None, uri_prefix=None, data=None, parent=None, errors: dict | None = None
+        self,
+        connector,
+        sensors_db: dict | None = None,
+        uri_prefix=None,
+        data=None,
+        parent=None,
+        errors: dict | None = None
     ):
         """
         Initialize sensors.
@@ -89,11 +96,11 @@ class Sensors(BoschEntities):
                 }
                 if sensor_id == NOTIFICATIONS and errors:
                     kwargs["errorcodes"] = errors
-                SensorClass = get_sensor_class(
-                    device_type=connector.device_type, sensor_type=sensor_id
+                sensor_class = get_sensor_class(
+                    device_type=connector.device_type,
+                    sensor_type=sensor_id
                 )
-                print("sensr", SensorClass)
-                self._items[sensor_id] = SensorClass(
+                self._items[sensor_id] = sensor_class(
                     **kwargs,
                 )
 
@@ -111,6 +118,7 @@ class Sensors(BoschEntities):
                 DB_RECORD: record,
                 RECORDING: record.get(SENSOR_TYPE, REGULAR) == RECORDING,
             }
+#            print("mottaget %s", URI)
             if VALUE in retrieved:
                 fetched_sensors.append(retrieved)
 

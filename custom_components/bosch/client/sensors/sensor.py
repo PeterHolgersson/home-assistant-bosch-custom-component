@@ -1,9 +1,9 @@
 from __future__ import annotations
 import logging
-from bosch_thermostat_client.exceptions import DeviceException
-from bosch_thermostat_client.helper import BoschSingleEntity, DeviceClassEntity
-from bosch_thermostat_client.const import ID, RESULT, URI, TYPE, REGULAR, VALUE
-from bosch_thermostat_client.const.ivt import INVALID
+from ..exceptions import DeviceException
+from ..helper import BoschSingleEntity, DeviceClassEntity
+from ..const import ID, RESULT, URI, TYPE, REGULAR, VALUE
+from ..const.ivt import INVALID
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -66,7 +66,10 @@ class Sensor(BoschSingleEntity, DeviceClassEntity):
                 self._state = True
             except DeviceException as err:
                 _LOGGER.warning(
-                    f"Can't update data for {self.name}. Trying uri: {item[URI]}. Error message: {err}"
+                    "Can't update data for %s. Trying uri: %s. Error message: %s",
+                    {self.name},
+                    {item[URI]},
+                    {err}
                 )
                 self._extra_message = f"Can't update data. Error: {err}"
                 self._state = False

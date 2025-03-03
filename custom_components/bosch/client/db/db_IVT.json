@@ -57,7 +57,7 @@
     },
     "172": {
       "value": "iCom_Low_NSC_v1",
-      "name": "Enviline/Compress 6000/7000",
+      "name": "Compress 6000/7000 or GEOxxx",
       "type": "NSC_ICOM_GATEWAY"
     },
     "224": {

@@ -1,7 +1,7 @@
-from bosch_thermostat_client.db import get_ivt_errors, get_nefit_errors
-from bosch_thermostat_client.const.ivt import INVALID
+"""Notification sensor module."""
+from ..const.ivt import INVALID
 from .sensor import Sensor
-from bosch_thermostat_client.const import (
+from ..const import (
     RESULT,
     VALUE,
     VALUES,
@@ -9,6 +9,7 @@ from bosch_thermostat_client.const import (
 
 
 class NotificationSensor(Sensor):
+    """Notification sensor class."""
     errorcodes: dict
 
     def __init__(

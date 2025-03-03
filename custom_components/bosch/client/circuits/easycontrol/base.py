@@ -1,6 +1,6 @@
 import logging
 from ..circuit import Circuit
-from bosch_thermostat_client.const import (
+from ...const import (
     STATUS,
     DEFAULT_MIN_TEMP,
     MIN_REF,
